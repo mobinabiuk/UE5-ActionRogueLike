@@ -8,6 +8,8 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class USInteractionComponent;
+class UAnimMontage;
 
 UCLASS()
 class ACTIONROGUELIKEV_API ASCharacter : public ACharacter
@@ -15,10 +17,14 @@ class ACTIONROGUELIKEV_API ASCharacter : public ACharacter
 	GENERATED_BODY()
 
 protected:
-   UPROPERTY(EditAnywhere)
+   UPROPERTY(EditAnywhere, Category = "Attack")
    TSubclassOf<AActor> ProjectileClass;
 
-public:
+   UPROPERTY(EditAnywhere, Category = "Attack")
+   UAnimMontage* AttackAnim;
+
+   FTimerHandle TimerHandle_PrimaryAttack;
+  public:
 	// Sets default values for this character's properties
 	ASCharacter();
 
@@ -30,9 +36,19 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
 
+	UPROPERTY(VisibleAnywhere)
+	USInteractionComponent* InteractionComp;
+
+	
+
 	void MoveForward(float value);
 	void MoveRight(float value);
+	void StartJumpAction();
+	void StopJumpAction();
 	void PrimaryAttack();
+	void PrimaryInteract();
+	void PrimaryAttack_TimeLapsed();
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

@@ -6,6 +6,7 @@
 #include "Camera/CameraComponent.h"
 #include "DrawDebugHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "SInteractionComponent.h"
 
 
 // Sets default values
@@ -21,6 +22,8 @@ ASCharacter::ASCharacter()
 	bUseControllerRotationYaw = false;
 	//character looks at the current rotation
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	InteractionComp = CreateDefaultSubobject<USInteractionComponent>("InteractionComp");
 }
 
 // Called when the game starts or when spawned
@@ -58,9 +61,36 @@ void ASCharacter::MoveRight(float value)
 	FVector RightVector = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y);
 	AddMovementInput(RightVector, value);
 }
+
+void ASCharacter::StartJumpAction() 
+{
+	
+	bPressedJump = true;
+}
+
+void ASCharacter::StopJumpAction()
+{
+	bPressedJump = false;
+}
+
 void ASCharacter::PrimaryAttack() 
 {
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_02");
+	PlayAnimMontage(AttackAnim);
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeLapsed, 0.2f);
+	
+}
+
+void ASCharacter::PrimaryInteract()
+{
+	if (InteractionComp)
+	{
+		InteractionComp->PrimaryInteract();
+	}
+}
+
+void ASCharacter::PrimaryAttack_TimeLapsed()
+{
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
 	//GetControlRotation is where we are looking at
 	//GetActorLocation is center of our actor to spawn
 	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
@@ -81,7 +111,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
-	
-
+	PlayerInputComponent->BindAction("JumpAction", IE_Pressed, this, &ASCharacter::StartJumpAction);
+	PlayerInputComponent->BindAction("JumpAction", IE_Released, this, &ASCharacter::StopJumpAction);
+	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
 }
 
