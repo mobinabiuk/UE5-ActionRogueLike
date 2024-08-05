@@ -2,13 +2,14 @@
 
 
 #include "SItemChest.h"
-#include "Components/StaticMeshComponent.h"
 
 
 void ASItemChest::Interact_Implementation(APawn* InstigatorPawn)
 {
-	LidMesh->SetRelativeRotation(FRotator(90.0, 0.0, 0.0));
-	LidMesh->SetRelativeLocation(FVector(0.0, 0.0, 50.0));
+	GEngine->AddOnScreenDebugMessage((uint64)-1, 5.f, FColor::Blue, TEXT("SItemChest called"));
+	FRotator CurrentRotation = PivotPoint->GetRelativeRotation();
+	UE_LOG(LogTemp, Warning, TEXT("Current Pitch: %f"), CurrentRotation.Pitch);
+	PivotPoint->SetRelativeRotation(FRotator(90.0, 0.0, 0.0));
 }
 
 // Sets default values
@@ -19,8 +20,13 @@ ASItemChest::ASItemChest()
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
 	RootComponent = BaseMesh;
 
+	PivotPoint = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PivotPoint"));
+	PivotPoint->SetupAttachment(BaseMesh);
+
 	LidMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LidMesh"));
-	LidMesh->SetupAttachment(BaseMesh);
+	LidMesh->SetupAttachment(PivotPoint);
+
+	
 }
 
 

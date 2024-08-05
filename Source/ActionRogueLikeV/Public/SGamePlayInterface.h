@@ -23,7 +23,7 @@ class ACTIONROGUELIKEV_API ISGamePlayInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	//expose function in both c++ & Blueprint
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	//interact function and who triggered it?
 	void Interact(APawn* InstigatorPawn);
 };

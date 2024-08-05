@@ -2,11 +2,12 @@
 
 #pragma once
 
+#include "SGamePlayInterface.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "SGamePlayInterface.h"
 #include "SItemChest.generated.h"
 
+class UStaticMeshComponent;
 
 UCLASS()
 class ACTIONROGUELIKEV_API ASItemChest : public AActor ,public ISGamePlayInterface
@@ -26,8 +27,11 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BaseMesh;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	UStaticMeshComponent* LidMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UStaticMeshComponent* PivotPoint;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

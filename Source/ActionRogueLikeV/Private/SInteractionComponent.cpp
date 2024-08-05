@@ -57,19 +57,30 @@ void USInteractionComponent::PrimaryInteract()
 	FColor LineColor = bBlockingIt ? FColor::Green : FColor::Red;
 
 	//to get the whole array
-	for (FHitResult Hit:Hits)
+	for (const FHitResult &Hit:Hits)
 	{
-		AActor* HitActor = Hit.GetActor();
+		AActor* HitActor = nullptr;
+	    HitActor = Hit.GetActor();
 		//IF HITACTOR IS NOT NULL
 		if (HitActor)
 		{
 			if (HitActor->Implements<USGamePlayInterface>())
 			{
+				
 				//casting variable ExeCute_Interact needs a pawn param
-				APawn* MyPawn = Cast<APawn>(MyOwner);
-				ISGamePlayInterface::Execute_Interact(HitActor, MyPawn);
-				break;
+				APawn* MyPawn = Cast<APawn>(GetOwner());
+				if (MyPawn)
+				{
+					ISGamePlayInterface::Execute_Interact(HitActor, MyPawn);
+
+					FHitResult DebugTemp = Hit;
+					//FVector2D DebugMsgPosition(DebugTemp.ImpactPoint.X, DebugTemp.ImpactPoint.Y);
+
+					break;
+				}
+				
 			}
+			
 		}
 		DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32,LineColor, false, 2.0f);
 	}
